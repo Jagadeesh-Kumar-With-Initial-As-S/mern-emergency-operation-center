@@ -68,7 +68,7 @@ export default function DashSidebar() {
               Profile
             </Sidebar.Item>
           </Link>
-          {currentUser.isAdmin && currentUser.isEditor && (
+          {(currentUser.isAdmin || currentUser.isEditor) && (
             <Link to="/dashboard?tab=posts">
               <Sidebar.Item
                 active={tab === "posts"}
