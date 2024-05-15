@@ -19,7 +19,6 @@ export default function CreatePost() {
   const [imageUploadError, setImageUploadError] = useState(null);
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
-
   const navigate = useNavigate();
 
   const handleUpdloadImage = async () => {
@@ -58,8 +57,24 @@ export default function CreatePost() {
       console.log(error);
     }
   };
+  const handleLocation = async (e) => {
+    e.preventDefault();
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&format=json`
+        );
+        const data = await res.json();
+        setFormData({
+          ...formData,
+          title: formData.title + ` Location: ` + data.display_name,
+        });
+      });
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const res = await fetch("/api/post/create", {
         method: "POST",
@@ -82,6 +97,12 @@ export default function CreatePost() {
       setPublishError("Something went wrong");
     }
   };
+
+  const handlePublish = (event) => {
+    handleLocation();
+    handleSubmit();
+  };
+
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">Create a post</h1>
@@ -89,23 +110,24 @@ export default function CreatePost() {
         <div className="flex flex-col gap-4 sm:flex-row justify-between">
           <TextInput
             type="text"
-            placeholder="Title"
+            placeholder="Topic"
             required
-            id="title"
+            id="Location"
             className="flex-1"
             onChange={(e) =>
               setFormData({ ...formData, title: e.target.value })
             }
           />
+          {/* <Button onClick={handleLocation}>Locate me</Button> */}
           <Select
             onChange={(e) =>
               setFormData({ ...formData, category: e.target.value })
             }
           >
             <option value="uncategorized">Select a category</option>
-            <option value="javascript">Flood</option>
-            <option value="reactjs">Tsunami</option>
-            <option value="nextjs">Others</option>
+            <option value="flood">Flood</option>
+            <option value="tsunami">Tsunami</option>
+            <option value="others">Others</option>
           </Select>
         </div>
         <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
@@ -151,7 +173,11 @@ export default function CreatePost() {
             setFormData({ ...formData, content: value });
           }}
         />
-        <Button type="submit" gradientDuoTone="purpleToPink">
+        <Button
+          type="submit"
+          gradientDuoTone="purpleToPink"
+          onClick={handlePublish}
+        >
           Publish
         </Button>
         {publishError && (
