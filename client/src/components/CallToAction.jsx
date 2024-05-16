@@ -1,4 +1,5 @@
 import { Button } from "flowbite-react";
+import image1 from "../assets/images/hydflood4-scaled.jpg";
 
 export default function CallToAction() {
   return (
@@ -6,12 +7,7 @@ export default function CallToAction() {
       <div className="flex-1 justify-center flex flex-col">
         <h2 className="text-2xl">Get started</h2>
         <p className="text-gray-500 my-2">
-          <img
-            src="https://imgs.mongabay.com/wp-content/uploads/sites/30/2020/10/28183520/hydflood4-scaled.jpg"
-            alt=""
-            sizes=""
-            srcset=""
-          />
+          <img src={image1} alt="" sizes="" srcset="" />
         </p>
       </div>
     </div>

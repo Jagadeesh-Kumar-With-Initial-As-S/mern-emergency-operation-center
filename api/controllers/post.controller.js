@@ -8,11 +8,13 @@ export const create = async (req, res, next) => {
   if (!req.body.title || !req.body.content) {
     return next(errorHandler(400, "Please provide all required fields"));
   }
-  const slug = req.body.title
-    .split(" ")
-    .join("-")
-    .toLowerCase()
-    .replace(/[^a-zA-Z0-9-]/g, "");
+  const timestamp = Date.now();
+  const slug =
+    req.body.title
+      .split(" ")
+      .join("-")
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9-]/g, "") + `-${timestamp}`;
   const newPost = new Post({
     ...req.body,
     slug,
@@ -40,6 +42,7 @@ export const getposts = async (req, res, next) => {
         $or: [
           { title: { $regex: req.query.searchTerm, $options: "i" } },
           { content: { $regex: req.query.searchTerm, $options: "i" } },
+          { location: { $regex: req.query.searchTerm, $options: "i" } },
         ],
       }),
     })
@@ -99,6 +102,7 @@ export const updatepost = async (req, res, next) => {
       {
         $set: {
           title: req.body.title,
+          location: req.body.location,
           content: req.body.content,
           category: req.body.category,
           image: req.body.image,

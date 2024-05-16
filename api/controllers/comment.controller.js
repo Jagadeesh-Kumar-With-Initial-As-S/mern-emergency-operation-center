@@ -105,7 +105,6 @@ export const deleteComment = async (req, res, next) => {
     next(error);
   }
 };
-
 export const getcomments = async (req, res, next) => {
   if (!req.user.isAdmin || !req.user.isEditor)
     return next(errorHandler(403, "You are not allowed to get all comments"));

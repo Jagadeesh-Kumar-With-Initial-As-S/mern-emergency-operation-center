@@ -67,10 +67,16 @@ export default function CreatePost() {
         const data = await res.json();
         setFormData({
           ...formData,
-          title: formData.title + ` Location: ` + data.display_name,
+          location: data.display_name,
         });
       });
+    } else {
+      setFormData({
+        ...formData,
+        location: "Not Available",
+      });
     }
+    console.log(formData.location);
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -98,27 +104,29 @@ export default function CreatePost() {
     }
   };
 
-  const handlePublish = (event) => {
-    handleLocation();
-    handleSubmit();
+  const handlePublish = async (e) => {
+    for (let i = 0; i < 2; i++) {
+      handleLocation(e);
+    }
+    handleSubmit(e);
   };
 
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">Create a post</h1>
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+      <form className="flex flex-col gap-4" onSubmit={handlePublish}>
         <div className="flex flex-col gap-4 sm:flex-row justify-between">
           <TextInput
             type="text"
-            placeholder="Topic"
+            placeholder="Title"
             required
-            id="Location"
+            id="title"
             className="flex-1"
-            onChange={(e) =>
-              setFormData({ ...formData, title: e.target.value })
-            }
+            onChange={(e) => {
+              setFormData({ ...formData, title: e.target.value });
+            }}
           />
-          {/* <Button onClick={handleLocation}>Locate me</Button> */}
+          <Button onClick={handleLocation}>Locate me</Button>
           <Select
             onChange={(e) =>
               setFormData({ ...formData, category: e.target.value })
@@ -173,11 +181,7 @@ export default function CreatePost() {
             setFormData({ ...formData, content: value });
           }}
         />
-        <Button
-          type="submit"
-          gradientDuoTone="purpleToPink"
-          onClick={handlePublish}
-        >
+        <Button type="submit" gradientDuoTone="purpleToPink">
           Publish
         </Button>
         {publishError && (

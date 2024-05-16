@@ -70,6 +70,9 @@ export default function PostPage() {
           {post && post.category}
         </Button>
       </Link>
+      <h1 className="text-3xl mt-10 p-3 text-center font-serif max-w-2xl mx-auto lg:text-4xl">
+        {post && post.location}
+      </h1>
       <img
         src={post && post.image}
         alt={post && post.title}
