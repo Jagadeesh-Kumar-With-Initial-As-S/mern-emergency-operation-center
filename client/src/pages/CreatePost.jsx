@@ -67,13 +67,13 @@ export default function CreatePost() {
         const data = await res.json();
         setFormData({
           ...formData,
-          location: data.display_name,
+          location: `Location: ` + data.display_name,
         });
       });
     } else {
       setFormData({
         ...formData,
-        location: "Not Available",
+        location: "Location: Not Available",
       });
     }
     console.log(formData.location);
