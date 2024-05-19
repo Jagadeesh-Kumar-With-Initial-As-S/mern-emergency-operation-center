@@ -135,7 +135,7 @@ export default function UpdatePost() {
             <option value="uncategorized">Select a category</option>
             <option value="flood">Flood</option>
             <option value="tsunami">Tsunami</option>
-            <option value="others">Others</option>
+            <option value="earthquake">Earthquake</option>
           </Select>
         </div>
         <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
