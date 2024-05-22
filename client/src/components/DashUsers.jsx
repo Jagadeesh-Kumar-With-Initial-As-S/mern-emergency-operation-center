@@ -25,7 +25,7 @@ export default function DashUsers() {
         console.log(error.message);
       }
     };
-    if (currentUser.isAdmin && currentUser.isEditor) {
+    if (currentUser.isAdmin || currentUser.isField) {
       fetchUsers();
     }
   }, [currentUser._id]);
@@ -47,25 +47,29 @@ export default function DashUsers() {
   };
 
   const handleDeleteUser = async () => {
-    try {
-      const res = await fetch(`/api/user/delete/${userIdToDelete}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));
-        setShowModal(false);
-      } else {
-        console.log(data.message);
+    if (currentUser.isAdmin) {
+      try {
+        const res = await fetch(`/api/user/delete/${userIdToDelete}`, {
+          method: "DELETE",
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setUsers((prev) =>
+            prev.filter((user) => user._id !== userIdToDelete)
+          );
+          setShowModal(false);
+        } else {
+          console.log(data.message);
+        }
+      } catch (error) {
+        console.log(error.message);
       }
-    } catch (error) {
-      console.log(error.message);
     }
   };
 
   return (
     <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
-      {currentUser.isAdmin && currentUser.isEditor && users.length > 0 ? (
+      {(currentUser.isAdmin || currentUser.isField) && users.length > 0 ? (
         <>
           <Table hoverable className="shadow-md">
             <Table.Head>
@@ -74,7 +78,10 @@ export default function DashUsers() {
               <Table.HeadCell>Username</Table.HeadCell>
               <Table.HeadCell>Email</Table.HeadCell>
               <Table.HeadCell>Admin</Table.HeadCell>
-              <Table.HeadCell>Delete</Table.HeadCell>
+              <Table.HeadCell>Field worker</Table.HeadCell>
+              {currentUser.isAdmin ? (
+                <Table.HeadCell>Delete</Table.HeadCell>
+              ) : null}
             </Table.Head>
             {users.map((user) => (
               <Table.Body className="divide-y" key={user._id}>
@@ -99,16 +106,25 @@ export default function DashUsers() {
                     )}
                   </Table.Cell>
                   <Table.Cell>
-                    <span
-                      onClick={() => {
-                        setShowModal(true);
-                        setUserIdToDelete(user._id);
-                      }}
-                      className="font-medium text-red-500 hover:underline cursor-pointer"
-                    >
-                      Delete
-                    </span>
+                    {user.isField ? (
+                      <FaCheck className="text-green-500" />
+                    ) : (
+                      <FaTimes className="text-red-500" />
+                    )}
                   </Table.Cell>
+                  {currentUser.isAdmin ? (
+                    <Table.Cell>
+                      <span
+                        onClick={() => {
+                          setShowModal(true);
+                          setUserIdToDelete(user._id);
+                        }}
+                        className="font-medium text-red-500 hover:underline cursor-pointer"
+                      >
+                        Delete
+                      </span>
+                    </Table.Cell>
+                  ) : null}
                 </Table.Row>
               </Table.Body>
             ))}

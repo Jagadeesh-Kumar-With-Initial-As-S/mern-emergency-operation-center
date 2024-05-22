@@ -61,11 +61,7 @@ export const editComment = async (req, res, next) => {
     if (!comment) {
       return next(errorHandler(404, "Comment not found"));
     }
-    if (
-      comment.userId !== req.user.id &&
-      !req.user.isAdmin &&
-      !req.user.isEditor
-    ) {
+    if (comment.userId !== req.user.id && !req.user.isAdmin) {
       return next(
         errorHandler(403, "You are not allowed to edit this comment")
       );
@@ -93,7 +89,7 @@ export const deleteComment = async (req, res, next) => {
     if (
       comment.userId !== req.user.id &&
       !req.user.isAdmin &&
-      !req.user.isEditor
+      !req.user.isUser
     ) {
       return next(
         errorHandler(403, "You are not allowed to delete this comment")
@@ -106,7 +102,7 @@ export const deleteComment = async (req, res, next) => {
   }
 };
 export const getcomments = async (req, res, next) => {
-  if (!req.user.isAdmin || !req.user.isEditor)
+  if (!req.user.isAdmin && !req.user.isField)
     return next(errorHandler(403, "You are not allowed to get all comments"));
   try {
     const startIndex = parseInt(req.query.startIndex) || 0;

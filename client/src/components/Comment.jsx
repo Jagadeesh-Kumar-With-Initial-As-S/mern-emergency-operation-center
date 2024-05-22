@@ -117,7 +117,7 @@ export default function Comment({ comment, onLike, onEdit, onDelete }) {
               </p>
               {currentUser &&
                 (currentUser._id === comment.userId ||
-                  (currentUser.isAdmin && currentUser.isEditor)) && (
+                  (currentUser.isAdmin && currentUser.isUser)) && (
                   <>
                     <button
                       type="button"

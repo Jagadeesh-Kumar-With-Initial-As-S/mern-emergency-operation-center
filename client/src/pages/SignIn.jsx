@@ -99,9 +99,13 @@ export default function SignIn() {
           <div className="flex gap-2 text-sm mt-5">
             <span>Dont Have an account?</span>
             <Link to="/sign-up" className="text-blue-500">
-              Sign Up
+              Sign Up As a User
+            </Link>
+            <Link to="/sign-up-field" className="text-blue-500">
+              Sign Up As a Field worker
             </Link>
           </div>
+
           {errorMessage && (
             <Alert className="mt-5" color="failure">
               {errorMessage}

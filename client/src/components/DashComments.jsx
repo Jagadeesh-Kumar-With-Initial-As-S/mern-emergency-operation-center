@@ -25,7 +25,7 @@ export default function DashComments() {
         console.log(error.message);
       }
     };
-    if (currentUser.isAdmin && currentUser.isEditor) {
+    if (currentUser.isAdmin || currentUser.isField) {
       fetchComments();
     }
   }, [currentUser._id]);
@@ -73,7 +73,7 @@ export default function DashComments() {
 
   return (
     <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
-      {currentUser.isAdmin && currentUser.isEditor && comments.length > 0 ? (
+      {(currentUser.isAdmin || currentUser.isField) && comments.length > 0 ? (
         <>
           <Table hoverable className="shadow-md">
             <Table.Head>
@@ -82,7 +82,9 @@ export default function DashComments() {
               <Table.HeadCell>Number of likes</Table.HeadCell>
               <Table.HeadCell>PostId</Table.HeadCell>
               <Table.HeadCell>UserId</Table.HeadCell>
-              <Table.HeadCell>Delete</Table.HeadCell>
+              {currentUser.isAdmin ? (
+                <Table.HeadCell>Delete</Table.HeadCell>
+              ) : null}
             </Table.Head>
             {comments.map((comment) => (
               <Table.Body className="divide-y" key={comment._id}>
@@ -94,17 +96,19 @@ export default function DashComments() {
                   <Table.Cell>{comment.numberOfLikes}</Table.Cell>
                   <Table.Cell>{comment.postId}</Table.Cell>
                   <Table.Cell>{comment.userId}</Table.Cell>
-                  <Table.Cell>
-                    <span
-                      onClick={() => {
-                        setShowModal(true);
-                        setCommentIdToDelete(comment._id);
-                      }}
-                      className="font-medium text-red-500 hover:underline cursor-pointer"
-                    >
-                      Delete
-                    </span>
-                  </Table.Cell>
+                  {currentUser.isAdmin ? (
+                    <Table.Cell>
+                      <span
+                        onClick={() => {
+                          setShowModal(true);
+                          setCommentIdToDelete(comment._id);
+                        }}
+                        className="font-medium text-red-500 hover:underline cursor-pointer"
+                      >
+                        Delete
+                      </span>
+                    </Table.Cell>
+                  ) : null}
                 </Table.Row>
               </Table.Body>
             ))}

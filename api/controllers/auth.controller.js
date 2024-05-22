@@ -33,6 +33,37 @@ export const signup = async (req, res, next) => {
   }
 };
 
+export const signup_field = async (req, res, next) => {
+  const { username, email, password } = req.body;
+
+  if (
+    !username ||
+    !email ||
+    !password ||
+    username === "" ||
+    email === "" ||
+    password === ""
+  ) {
+    next(errorHandler(400, "All fields are required"));
+  }
+
+  const hashedPassword = bcryptjs.hashSync(password, 10);
+
+  const newUser = new User({
+    username,
+    email,
+    password: hashedPassword,
+    isUser: false,
+    isField: true,
+  });
+
+  try {
+    await newUser.save();
+    res.json("Signup successful");
+  } catch (error) {
+    next(error);
+  }
+};
 export const signin = async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -53,7 +84,8 @@ export const signin = async (req, res, next) => {
       {
         id: validUser._id,
         isAdmin: validUser.isAdmin,
-        isEditor: validUser.isEditor,
+        isUser: validUser.isUser,
+        isField: validUser.isField,
       },
       process.env.JWT_SECRET
     );
@@ -77,7 +109,12 @@ export const google = async (req, res, next) => {
     const user = await User.findOne({ email });
     if (user) {
       const token = jwt.sign(
-        { id: user._id, isAdmin: user.isAdmin, isEditor: user.isEditor },
+        {
+          id: user._id,
+          isAdmin: user.isAdmin,
+          isUser: user.isUser,
+          isField: user.isField,
+        },
         process.env.JWT_SECRET
       );
       const { password, ...rest } = user._doc;
@@ -105,7 +142,8 @@ export const google = async (req, res, next) => {
         {
           id: newUser._id,
           isAdmin: newUser.isAdmin,
-          isEditor: newUser.isEditor,
+          isUser: newUser.isUser,
+          isField: newUser.isField,
         },
         process.env.JWT_SECRET
       );
