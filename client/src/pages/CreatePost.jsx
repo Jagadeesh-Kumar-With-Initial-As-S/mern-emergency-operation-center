@@ -59,21 +59,26 @@ export default function CreatePost() {
   };
   const handleLocation = async (e) => {
     e.preventDefault();
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        const res = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&format=json`
-        );
-        const data = await res.json();
-        setFormData({
-          ...formData,
-          location: `Location: ` + data.display_name,
+    try {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async (position) => {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&format=json`
+          );
+          const data = await res.json();
+          console.log(data);
+          setFormData({
+            ...formData,
+            location: `Location: ` + data.display_name,
+          });
         });
-      });
-    } else {
+        console.log(formData.location);
+      }
+    } catch (error) {
+      console.log(error);
       setFormData({
         ...formData,
-        location: "Location: Not Available",
+        location: `Location: Not Available`,
       });
     }
     console.log(formData.location);
@@ -105,9 +110,8 @@ export default function CreatePost() {
   };
 
   const handlePublish = async (e) => {
-    for (let i = 0; i < 2; i++) {
-      handleLocation(e);
-    }
+    handleLocation(e);
+
     handleSubmit(e);
   };
 
